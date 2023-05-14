@@ -1,5 +1,5 @@
 #include "main.h"
-
+#define MAX_TOKENS 100
 /**
  * tokenize_input - Breaks the input into a command followed by its arguments
  * @buffer: The input
@@ -7,10 +7,21 @@
  */
 void tokenize_input(char *buffer, char **tokens)
 {
-	/* Last character is a new line, don't copy*/
-	strncpy(tokens[0], buffer, strlen(buffer) - 1);
-	tokens[1] = NULL;
+	char *token;
+	int i = 0;
+
+	token = strtok(buffer, " \n");
+
+	while (token != NULL && i < MAX_TOKENS)
+	{
+		tokens[i] = token;
+		token = strtok(NULL, " \n");
+		i++;
+	}
+
+	tokens[i] = NULL;
 }
+
 /**
  * evaluate_input - Evaluates input and calls appropriate functions
  * @argv: Like argv in main
@@ -21,6 +32,7 @@ void evaluate_input(char **tokens, char **argv, char **env)
 {
 	if (tokens[0] == NULL)
 		return;
+
 	if (fork() == 0)
 	{
 		execve(tokens[0], tokens, env);
