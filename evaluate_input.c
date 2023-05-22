@@ -29,3 +29,25 @@ void evaluate_input(char **tokens, char **argv, char **env)
 	}
 	wait(NULL);
 }
+
+/**
+ * eval_inbuilt_command - Checks if a command is an inbuilt command
+ * and evaluate it
+ * @command: The command
+ * @argv: Arguments to command, starting with the command
+ * @envp: Currentn execution envirionment
+ * Return: 1 if true, (0) otherwise
+ */
+int eval_inbuilt_command(char *command, char** argv, char **envp)
+{
+	if (strcmp(command, "env") == 0)
+	{
+		print_env(envp);
+		return (1);
+	}
+	if (strcmp(command, "exit") == 0)
+	{
+		_exit(0);
+	}
+	return (0);
+}
