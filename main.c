@@ -13,9 +13,11 @@ int main(int argc, char **argv, char **env)
 	ssize_t res;
 	char *buffer = NULL;
 	char *tokens[100];
-	/* Useful later, don't delete yet
-	struct sigaction eof_act;
-	struct sigaction int_act;*/
+	/*
+	 * Useful later, don't delete yet
+	 * struct sigaction eof_act;
+	 * struct sigaction int_act;
+	*/
 
 	if (!isatty(STDIN_FILENO))
 	{
@@ -25,16 +27,16 @@ int main(int argc, char **argv, char **env)
 		dprintf(STDERR_FILENO, "%s: %d: %s: not found\n", argv[0], argc, tokens[0]);
 		exit(EXIT_FAILURE);
 	}
-	/* Found these useful for handling signals later, don't delete
-	int_act.sa_handler = sigint_handler;
-	int_act.sa_flags = SA_RESTART;
+	/*
+	* Found these useful for handling signals later, don't delete
+	* int_act.sa_handler = sigint_handler;
+	* int_act.sa_flags = SA_RESTART;
 
-	eof_act.sa_handler = sigquit_handler;
+	* eof_act.sa_handler = sigquit_handler;
 
-	sigaction(SIGINT, &int_act, NULL);
-	sigaction(SIGQUIT, &eof_act, NULL);
+	* sigaction(SIGINT, &int_act, NULL);
+	* sigaction(SIGQUIT, &eof_act, NULL);
 	*/
-
 	while (1)
 	{
 		write(STDOUT_FILENO, "($) ", 4);
@@ -46,6 +48,5 @@ int main(int argc, char **argv, char **env)
 	}
 
 	free(buffer);
-
 	return (0);
 }

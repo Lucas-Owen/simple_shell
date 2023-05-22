@@ -12,3 +12,25 @@ void print_env(char **envp)
 	while (envp[i])
 		puts(envp[i++]);
 }
+
+/**
+ * get_env - Gets the name and value of the environment variable passed to it
+ * @name: Name of the environment variable
+ * @envp: The full list of environment variables
+ * Return: Malloced (char *) or NULL
+ */
+char *get_env(char *name, char **envp)
+{
+	size_t i = 0, len = strlen(name);
+
+	while (envp[i] != NULL)
+	{
+		if (strncmp(envp[i], name, len) == 0
+			&& envp[i][len] == '=')
+			break;
+		i++;
+	}
+	if (envp[i] == NULL)
+		return (NULL);
+	return (strdup(envp[i] + len + 1));
+}

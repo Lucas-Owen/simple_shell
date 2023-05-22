@@ -2,7 +2,7 @@
 
 /**
  * sigint_handler - signal handler that handles SIGINT
- * received
+ * @signum: The signal number
  */
 void sigint_handler(int signum)
 {
@@ -12,7 +12,7 @@ void sigint_handler(int signum)
 
 /**
  * sigquit_handler - signal handler that handles SIGQUIT
- * received
+ * @signum: The signal number
  */
 void sigquit_handler(int signum)
 {

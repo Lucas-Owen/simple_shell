@@ -32,6 +32,12 @@ void evaluate_input(char **tokens, char **argv, char **env)
 {
 	if (tokens[0] == NULL)
 		return;
+	if (eval_inbuilt_command(tokens[0], argv, env))
+		return;
+
+	tokens[0] = eval_path(tokens[0], env);
+	if (tokens[0] == NULL)
+		return;
 
 	if (fork() == 0)
 	{
@@ -50,8 +56,11 @@ void evaluate_input(char **tokens, char **argv, char **env)
  * @envp: Currentn execution envirionment
  * Return: 1 if true, (0) otherwise
  */
-int eval_inbuilt_command(char *command, char** argv, char **envp)
+int eval_inbuilt_command(char *command, char **argv, char **envp)
 {
+	(void) argv;
+	if (command == NULL)
+		return (0);
 	if (strcmp(command, "env") == 0)
 	{
 		print_env(envp);
