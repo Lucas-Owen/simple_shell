@@ -15,12 +15,16 @@
 
 #define MAX_TOKENS 100
 
-int _getline(char **buf, size_t *n, FILE *stream);
+int _getline(char *buf, FILE *stream);
 
 void tokenize_input(char *buffer, char **tokens);
-void evaluate_input(char **tokens, char **argv, char **env, int istty);
-int eval_inbuilt_command(char *command, char **argv, char **envp);
+void evaluate_input(char **, char **, char **, int, int, int *);
+int eval_inbuilt_command(char **, char **, char **, int, int *);
 char *eval_path(char *command, char **envp);
+
+
+void free_tokens(char **tokens);
+void eval_exit(char **argv, char **tokens, int, int *);
 
 void print_env(char **envp);
 char *get_env(char *name, char **envp);
