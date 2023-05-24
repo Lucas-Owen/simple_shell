@@ -29,7 +29,7 @@ char *eval_path(char *command, char **envp)
 
 	/* Check if file is in current directory first */
 	if (file_in_dir(command))
-		return (command);
+		return ((command));
 
 	/* First find the PATH variable */
 	paths = get_env("PATH", envp);

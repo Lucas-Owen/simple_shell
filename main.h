@@ -13,9 +13,13 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#define MAX_TOKENS 100
+
+int _getline(char **buf, size_t *n, FILE *stream);
+
 void tokenize_input(char *buffer, char **tokens);
-void evaluate_input(char **tokens, char **argv, char **env);
-int eval_inbuilt_command(char *command, char** argv, char **envp);
+void evaluate_input(char **tokens, char **argv, char **env, int istty);
+int eval_inbuilt_command(char *command, char **argv, char **envp);
 char *eval_path(char *command, char **envp);
 
 void print_env(char **envp);
