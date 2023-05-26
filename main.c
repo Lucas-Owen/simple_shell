@@ -1,6 +1,5 @@
 #include "main.h"
 
-
 /**
  * main - Simple unix shell
  * @argc: Length of argv
@@ -8,45 +7,41 @@
  * @env: Environment variables
  * Return: (0) or exits with a status != 0
  */
-int main(__attribute__((unused)) int argc, char **argv, char **env)
+int main(int argc, char **argv,
+	__attribute__((unused)) char **env)
 {
 	ssize_t res;
 	int line = 0;
 	int status = 0;
 	char buffer[BUFSIZ];
 	char *tokens[MAX_TOKENS];
+	FILE *stream;
 
-	/*
-	 * Useful later, don't delete yet
-	 * struct sigaction eof_act;
-	 * struct sigaction int_act;
-	*/
-	if (!isatty(STDIN_FILENO))
+	if (!isatty(STDIN_FILENO) || argc == 2)
 	{
-		while (_getline(buffer, stdin) >= 0)
+		stream = argc == 2 ? fopen(argv[1], "r") : stdin;
+		if (stream == NULL)
 		{
-			tokenize_input(buffer, tokens);
-			evaluate_input(tokens, argv, env, 0, ++line, &status);
+			perror("fopen");
+			exit(EXIT_SUCCESS);
+		}
+		while (_getline(buffer, stream) >= 0)
+		{
+			tokenize_input(buffer, tokens, environ, &status);
+			evaluate_input(tokens, argv, environ, 0, ++line, &status);
 			free_tokens(tokens);
 		}
+		fclose(stream);
 		eval_exit(argv, tokens, line, &status);
 	}
-	/*
-	* Found these useful for handling signals later, don't delete yet
-	* int_act.sa_handler = sigint_handler;
-	* int_act.sa_flags = SA_RESTART;
-	* eof_act.sa_handler = sigquit_handler;
-	* sigaction(SIGINT, &int_act, NULL);
-	* sigaction(SIGQUIT, &eof_act, NULL);
-	*/
 	while (1)
 	{
-		write(STDOUT_FILENO, "($) ", 4);
+		dprintf(STDOUT_FILENO, "($) ");
 		res = _getline(buffer, stdin);
 		if (res < 0)
 			clearerr(stdin);
-		tokenize_input(buffer, tokens);
-		evaluate_input(tokens, argv, env, 1, line, &status);
+		tokenize_input(buffer, tokens, environ, &status);
+		evaluate_input(tokens, argv, environ, 1, line, &status);
 		free_tokens(tokens);
 	}
 	return (0);

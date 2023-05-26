@@ -70,10 +70,24 @@ int eval_inbuilt_command(char **tokens, char **argv, char **envp,
 		*status = (EXIT_SUCCESS << 8);
 		return (1);
 	}
-	/* TODO: Transfer handling of exit to this place*/
 	if (strcmp(tokens[0], "exit") == 0)
 	{
 		eval_exit(argv, tokens, line, status);
+		return (1);
+	}
+	if (strcmp(tokens[0], "cd") == 0)
+	{
+		change_dir(argv, tokens, envp, status);
+		return (1);
+	}
+	if (strcmp(tokens[0], "setenv") == 0)
+	{
+		set_env(tokens, status);
+		return (1);
+	}
+	if (strcmp(tokens[0], "unsetenv") == 0)
+	{
+		unset_env(tokens, status);
 		return (1);
 	}
 
