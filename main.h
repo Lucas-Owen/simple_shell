@@ -29,7 +29,7 @@ char *eval_path(char *command, char **envp);
 
 void free_tokens(char **tokens);
 void eval_exit(char **argv, char **tokens, int, int *);
-void change_dir(char **argv, char **tokens, char **envp, int *status);
+void change_dir(char **argv, char **tokens, char **envp, int line, int *);
 void set_env(char **tokens, int *status);
 void unset_env(char **tokens, int *status);
 

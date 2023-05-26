@@ -77,7 +77,7 @@ int eval_inbuilt_command(char **tokens, char **argv, char **envp,
 	}
 	if (strcmp(tokens[0], "cd") == 0)
 	{
-		change_dir(argv, tokens, envp, status);
+		change_dir(argv, tokens, envp, line, status);
 		return (1);
 	}
 	if (strcmp(tokens[0], "setenv") == 0)

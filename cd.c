@@ -32,10 +32,11 @@ int update_env(char **envp, int *status)
  * @tokens: The tokens with command and args
  * @argv: Like argv in main
  * @envp: Currentn execution envirionment
+ * @line: Line number being executed
  * @status: Status of previously exec'd task
  * Return: void
  */
-void change_dir(char **argv, char **tokens, char **envp, int *status)
+void change_dir(char **argv, char **tokens, char **envp, int line, int *status)
 {
 	int res;
 
@@ -47,7 +48,14 @@ void change_dir(char **argv, char **tokens, char **envp, int *status)
 		return;
 	}
 	if (tokens[1] == NULL)
+	{
 		tokens[1] = get_env("HOME", envp);
+		if (tokens[1] == NULL)
+		{
+			*status = (EXIT_FAILURE << 8);
+			return;
+		}
+	}
 	else if (strcmp(tokens[1], "-") == 0)
 	{
 		free(tokens[1]);
@@ -60,8 +68,8 @@ void change_dir(char **argv, char **tokens, char **envp, int *status)
 	if (res < 0)
 	{
 		dprintf(STDERR_FILENO,
-			"%s: %s: %s: No such file or directory\n",
-			argv[0], tokens[0], tokens[1]);
+			"%s: %d: %s: can't cd to %s\n",
+			argv[0], line, tokens[0], tokens[1]);
 		*status = (EXIT_FAILURE << 8);
 		return;
 	}

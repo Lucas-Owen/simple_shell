@@ -49,17 +49,20 @@ void tokenize_input(char *buffer, char **tokens, char **envp, int *status)
 
 	if (buffer == NULL)
 		return;
-	/* Remove comments */
-	buffer = _strtok(&buffer, "#");
 	token = _strtok(&buffer, " ");
 
 	while (token != NULL && i < MAX_TOKENS)
 	{
 		/* Expand variables */
 		tokens[i] = eval_variable(token, envp, status);
+		/* Remove comments */
+		if (tokens[i][0] == '#')
+		{
+			free(tokens[i]);
+			tokens[i] = NULL;
+			break;
+		}
 		token = _strtok(&buffer, " ");
 		i++;
 	}
-
-	tokens[i] = NULL;
 }

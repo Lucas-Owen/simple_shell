@@ -63,18 +63,15 @@ void eval_other_var(char **str, char **buf, char **envp)
 
 	if (stop != NULL)
 		*stop = '\0';
-	if (eval_path_var(str, buf, envp))
-		;
-	else if (*(*str) == '\0')
+	if (*(*str) == '\0')
 	{
 		offset = sprintf((*buf), "%c", '$');
 		(*buf) += offset;
 	}
 	else
-	{
-		offset = sprintf((*buf), "%s", *str);
-		(*buf) += offset;
-	}
+		eval_path_var(str, buf, envp);
+
+	(*str) += strlen(*str);
 	if (stop != NULL)
 		*stop = '$';
 }
@@ -107,11 +104,7 @@ char *eval_variable(char *variable, char **envp, int *status)
 		if (eval_inbuilt_var(&start, &buf, status))
 			;
 		else
-		{
 			eval_other_var(&start, &buf, envp);
-		}
-		if (strchr(start, '$') == NULL)
-			break;
 		offset = strcspn(start, "$");
 		strncat(buf, start, offset);
 		buf += offset;
