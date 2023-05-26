@@ -27,8 +27,9 @@ int main(__attribute__((unused)) int argc, char **argv, char **env)
 		{
 			tokenize_input(buffer, tokens);
 			evaluate_input(tokens, argv, env, 0, ++line, &status);
+			free_tokens(tokens);
 		}
-		exit(0);
+		eval_exit(argv, tokens, line, &status);
 	}
 	/*
 	* Found these useful for handling signals later, don't delete yet
@@ -46,6 +47,7 @@ int main(__attribute__((unused)) int argc, char **argv, char **env)
 			clearerr(stdin);
 		tokenize_input(buffer, tokens);
 		evaluate_input(tokens, argv, env, 1, line, &status);
+		free_tokens(tokens);
 	}
 	return (0);
 }

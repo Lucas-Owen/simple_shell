@@ -12,16 +12,16 @@
 void evaluate_input(char **tokens, char **argv, char **env,
 	int istty, int line, int *status)
 {
-	char *temp = NULL;
-	int childpid = 0;
+	char *resolved_path = NULL;
+	pid_t childpid = 0;
 
 	if (tokens[0] == NULL)
 		return;
 	if (eval_inbuilt_command(tokens, argv, env, line, status))
 		return;
 
-	temp = eval_path(tokens[0], env);
-	if (temp == NULL)
+	resolved_path = eval_path(tokens[0], env);
+	if (resolved_path == NULL)
 	{
 		if (istty)
 			dprintf(STDERR_FILENO, "%s: command not found\n",
@@ -29,13 +29,13 @@ void evaluate_input(char **tokens, char **argv, char **env,
 		else
 			dprintf(STDERR_FILENO, "%s: %d: %s: not found\n",
 				argv[0], line, tokens[0]);
-		*status = 127;
+		*status = (127 << 8);
 		return;
 	}
-	if (tokens[0] != temp)
+	if (tokens[0] != resolved_path)
 	{
 		free(tokens[0]);
-		tokens[0] = temp;
+		tokens[0] = resolved_path;
 	}
 	childpid = fork();
 	if (childpid == 0)
@@ -46,8 +46,6 @@ void evaluate_input(char **tokens, char **argv, char **env,
 	}
 	else
 		wait(status);
-	free_tokens(tokens);
-	/* WEXITSTATUS(status); does nothing at the moment */
 }
 
 /**
@@ -68,12 +66,8 @@ int eval_inbuilt_command(char **tokens, char **argv, char **envp,
 		return (0);
 	if (strcmp(tokens[0], "env") == 0)
 	{
-		if (fork() == 0)
-		{
-			print_env(envp);
-			_exit(EXIT_SUCCESS);
-		}
-		wait(status);
+		print_env(envp);
+		*status = (EXIT_SUCCESS << 8);
 		return (1);
 	}
 	/* TODO: Transfer handling of exit to this place*/
