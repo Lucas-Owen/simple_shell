@@ -36,7 +36,53 @@ char *_strtok(char **str, char *delim)
 	return (token[0] == '\0' ? NULL : token);
 }
 /**
+ * space_out - Look for specified substring and pad with spaces
+ * Replaces all occurrences
+ * @buffer: The whole string
+ * @str: Substring to look for in buffer and pad
+ * Return: void
+ */
+void space_out(char *buffer, const char *str)
+{
+	char *buf;
+	size_t len_buf = strlen(buffer);
+	size_t len_str = strlen(str);
+	size_t i;
+
+	buf = strstr(buffer, str);
+	for (; buf; buf = strstr(buf + len_str + 2, str))
+	{
+		memmove(buf + len_str + 2,
+			buf + len_str,
+			buffer + len_buf - buf + 1);
+		*buf = ' ';
+		for (i = 1; i <= len_str; i++)
+			*(buf + i) = str[i - 1];
+		*(buf + i) = ' ';
+		len_buf = strlen(buffer);
+	}
+}
+/**
+ * add_spaces_to_separators - Adds spaces before and after separators like
+ * ;, && and ||
+ * @buffer: The buffer with possible unspaced separators
+ * The buffer is assumed large enough to be expanded
+ * Return: void
+ */
+void add_spaces_to_separators(char *buffer)
+{
+
+	if (buffer == NULL)
+		return;
+
+	space_out(buffer, ";");
+	space_out(buffer, "&&");
+	space_out(buffer, "||");
+}
+/**
  * tokenize_input - Breaks the input into a command followed by its arguments
+ * Removes spaces
+ * Takes into account special separators (;, ||, &&)
  * @buffer: The input
  * @tokens: Where to store the tokens
  * @envp: The environment variables
@@ -49,6 +95,7 @@ void tokenize_input(char *buffer, char **tokens, char **envp, int *status)
 
 	if (buffer == NULL)
 		return;
+	add_spaces_to_separators(buffer);
 	token = _strtok(&buffer, " ");
 
 	while (token != NULL && i < MAX_TOKENS)

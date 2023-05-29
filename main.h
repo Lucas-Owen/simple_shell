@@ -1,6 +1,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include "lists.h"
+
 #include <limits.h>
 #include <signal.h>
 #include <stdio.h>
@@ -23,12 +25,10 @@ void tokenize_input(char *buffer, char **tokens, char **envp, int *status);
 
 char *eval_variable(char *variable, char **envp, int *status);
 
-void evaluate_input(char **, char **, char **, int, int, int *);
-int eval_inbuilt_command(char **, char **, char **, int, int *);
+void run_line_of_command(char **, char **, char **, int, int, int *);
 char *eval_path(char *command, char **envp);
 
-void free_tokens(char **tokens);
-void eval_exit(char **argv, char **tokens, int, int *);
+void eval_exit(char **argv, char **tokens, int, int *, list_t *);
 void change_dir(char **argv, char **tokens, char **envp, int line, int *);
 void set_env(char **tokens, int *status);
 void unset_env(char **tokens, int *status);
