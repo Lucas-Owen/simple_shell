@@ -76,7 +76,7 @@ void unset_env(char **tokens, int *status)
 		*status = (EXIT_FAILURE << 8);
 		return;
 	}
-	if (unsetenv(tokens[0]) < 0)
+	if (unsetenv(tokens[1]) < 0)
 	{
 		perror("unsetenv");
 		*status = (EXIT_FAILURE << 8);
