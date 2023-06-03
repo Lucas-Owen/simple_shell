@@ -25,15 +25,19 @@ void tokenize_input(char *buffer, char **tokens, char **envp, int *status);
 
 char *eval_variable(char *variable, char **envp, int *status);
 
-void run_line_of_command(char **, char **, char **, int, int, int *);
+void run_line_of_command(char **, char **, char **, int, int, int *,
+			alias_list **);
 char *eval_path(char *command, char **envp);
 
-void eval_exit(char **argv, char **tokens, int, int *, list_t *);
+void eval_exit(char **argv, char **tokens, int, int *, token_list *);
 void change_dir(char **argv, char **tokens, char **envp, int line, int *);
 void set_env(char **tokens, int *status);
 void unset_env(char **tokens, int *status);
 
 void print_env(char **envp);
 char *get_env(char *name, char **envp);
+
+void alias(char **tokens, int *status, alias_list **);
+alias_list *eval_alias(alias_list *aliases, char *name);
 
 #endif

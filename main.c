@@ -25,6 +25,7 @@ int main(int argc, char **argv,
 	int status = 0;
 	char buffer[BUFSIZ];
 	char *tokens[MAX_TOKENS];
+	alias_list *aliases = NULL;
 	FILE *stream;
 
 	initialize_tokens(tokens);
@@ -40,13 +41,14 @@ int main(int argc, char **argv,
 	while (_getline(buffer, stream) >= 0)
 	{
 		tokenize_input(buffer, tokens, environ, &status);
-		run_line_of_command(tokens, argv, environ, istty, ++line, &status);
+		run_line_of_command(tokens, argv, environ, istty, ++line, &status, &aliases);
 		if (istty)
 			dprintf(STDOUT_FILENO, "($) ");
 	}
 	if (istty)
 		dprintf(STDOUT_FILENO, "\n");
 	fclose(stream);
+	free_alias_list(aliases);
 	exit(WEXITSTATUS(status));
 }
 

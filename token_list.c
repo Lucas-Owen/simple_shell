@@ -1,15 +1,15 @@
 #include "lists.h"
 /**
- * add_node_end - Add a node at the end of a linked list
- * @head: The list_t
+ * add_token - Add a node at the end of a linked list
+ * @head: The token_list
  * @tokens: Malloced list of commands
  * @sep: Comnand separator between this and the next
  * Return: The address of the new element or (NULL)
  */
-list_t *add_node_end(list_t **head, char **tokens, char *sep)
+token_list *add_token(token_list **head, char **tokens, char *sep)
 {
-	list_t *new = malloc(sizeof(list_t));
-	list_t *temp = *head;
+	token_list *new = malloc(sizeof(token_list));
+	token_list *temp = *head;
 
 	if (new == NULL)
 		return (NULL);
@@ -51,13 +51,13 @@ void free_tokens(char **tokens)
 }
 
 /**
- * free_list - Frees all nodes in the list_t
- * @head: The list_t
+ * free_token_list - Frees all nodes in the token_list
+ * @head: The token_list
  * Return: void
  */
-void free_list(list_t *head)
+void free_token_list(token_list *head)
 {
-	list_t *temp;
+	token_list *temp;
 
 	while (head != NULL)
 	{

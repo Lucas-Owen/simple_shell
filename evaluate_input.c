@@ -17,18 +17,26 @@ int is_sep(char *input)
 }
 /**
  * init_commands - breaks line of commands into a linked list
+ * Replaces the first word of the command from by its alias if available
  * Each node contains a command and a separator - for the next command
  * separators include ';, &&, ||'
  * @tokens: Array of strings representing a signle line of command
+ * @aliases: Linked list of aliases
  * Each token is set to NULL after this
- * Return: list_t* lilnked list
+ * Return: token_list* lilnked list
  */
-list_t *init_commands(char **tokens)
+token_list *init_commands(char **tokens, alias_list *aliases)
 {
-	list_t *head = NULL;
+	token_list *head = NULL;
 	char **command = NULL;
+	alias_list *aka = eval_alias(aliases, tokens[0]);
 	int i = 0, j = 0, k;
 
+	if (aka)
+	{
+		free(tokens[0]);
+		tokens[0] = strdup(aka->value);
+	}
 	while (1)
 	{
 		if (is_sep(tokens[i]))
@@ -37,7 +45,7 @@ list_t *init_commands(char **tokens)
 			for (k = 0; j < i; j++, k++)
 				command[k] = tokens[j];
 			command[k] = NULL;
-			add_node_end(&head, command, tokens[j]);
+			add_token(&head, command, tokens[j]);
 			if (tokens[i] != NULL)
 			{
 				++i;
@@ -104,10 +112,11 @@ void evaluate_input(char **tokens, char **argv, char **env,
  * @line: line number
  * @status: Status of previously exec'd task
  * @head: Linked list of commands
+ * @aliases: Linked list of aliases
  * Return: 1 if true, (0) otherwise
  */
 int eval_inbuilt_command(char **tokens, char **argv, char **envp,
-	int line, int *status, list_t *head)
+	int line, int *status, token_list *head, alias_list **aliases)
 {
 	(void) argv;
 	if (tokens[0] == NULL)
@@ -138,7 +147,11 @@ int eval_inbuilt_command(char **tokens, char **argv, char **envp,
 		unset_env(tokens, status);
 		return (1);
 	}
-
+	if (strcmp(tokens[0], "alias") == 0)
+	{
+		alias(tokens, status, aliases);
+		return (1);
+	}
 	return (0);
 }
 
@@ -151,17 +164,18 @@ int eval_inbuilt_command(char **tokens, char **argv, char **envp,
  * @istty: Whether input is from terminal or not, 1 or 0 resp
  * @line: line number
  * @status: Status of previously exec'd task
+ * @aliases: List of aliases
  */
 void run_line_of_command(char **tokens, char **argv, char **env,
-	int istty, int line, int *status)
+	int istty, int line, int *status, alias_list **aliases)
 {
-	list_t *head = init_commands(tokens);
-	list_t *temp;
+	token_list *head = init_commands(tokens, *aliases);
+	token_list *temp;
 
 	for (temp = head; temp != NULL; temp = temp->next)
 	{
 		if (eval_inbuilt_command(temp->tokens, argv, env,
-			line, status, head))
+			line, status, head, aliases))
 			continue;
 		evaluate_input(temp->tokens, argv, env, istty, line, status);
 		if (temp->sep == NULL)
@@ -171,5 +185,5 @@ void run_line_of_command(char **tokens, char **argv, char **env,
 		if (strcmp("||", temp->sep) == 0 && WEXITSTATUS(*status) == 0)
 			break;
 	}
-	free_list(head);
+	free_token_list(head);
 }

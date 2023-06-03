@@ -10,7 +10,8 @@
  * @head: Linked list containing all commands
  * Return: void
  */
-void eval_exit(char **argv, char **tokens, int line, int *status, list_t *head)
+void eval_exit(char **argv, char **tokens, int line, int *status,
+		token_list *head)
 {
 	char *endptr = NULL;
 	int e_stat;
@@ -36,6 +37,6 @@ void eval_exit(char **argv, char **tokens, int line, int *status, list_t *head)
 		}
 		*status = ((e_stat & 0xff) << 8);
 	}
-	free_list(head);
+	free_token_list(head);
 	exit(WEXITSTATUS(*status));
 }
